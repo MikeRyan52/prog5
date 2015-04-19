@@ -52,7 +52,7 @@ function scene:create( event )
    -- Create a simple Next Level button
    nextLevelText = display.newText({
       parent = sceneGroup,
-      text = 'Next Level',
+      text = 'Level Creator',
       width = ( display.actualContentWidth / 2 ) - 20,
       height = 80,
       x = display.actualContentWidth - ( display.actualContentWidth / 4 ) - 20,
@@ -65,7 +65,7 @@ function scene:create( event )
 
    nextLevelText:addEventListener( 'tap', function()
       if level.loaded then level:endLevel() end
-      composer.gotoScene( 'views.level-two', {
+      composer.gotoScene( 'views.level-creator', {
          effect = "fade",
          time = 200
       })
