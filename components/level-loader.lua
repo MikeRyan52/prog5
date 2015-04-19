@@ -2,30 +2,17 @@ local json = require 'json'
 local brick = require 'components.brick'
 local composer = require 'composer'
 
-function new(group, level, nextScene)
+function new(group, levelData, nextScene)
 	group.loaded = false
 	group.started = false
 	group.normalBricks = 0
 
 	-- Load the level from the JSON file in the /levels/ folder
 	function group:loadLevel()
-		local levelPath = system.pathForFile( 'levels/' .. level .. '.json', system.ResourceDirectory )
-		local levelFile, errorString = io.open( levelPath, 'r')
-
-		if not levelFile then
-			print(errorString)
-			return false
-		else
-			local level = json.decode( levelFile:read('*a') )
-			levelFile:close()
-
-			self.levelName = level.level
-			self.brickLayout = level.bricks
-
-			
-			self.loaded = true
-			return true			
-		end
+		self.levelName = "User Level"
+		self.brickLayout = levelData
+		self.loaded = true
+		return true
 	end
 
 	-- Handle ball collision with bricks

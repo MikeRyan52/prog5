@@ -27,7 +27,7 @@ function scene:create( event )
    topbar:setFillColor( 0.06, 0.36, 0.39 )
 
    -- create and load the level
-   level = levelLoader.new(sceneGroup, 'two', 'views.game-over')
+   level = levelLoader.new(sceneGroup, event.params.levelData, 'views.level-two')
    level:loadLevel()
 
    -- Begin rendering the UI
@@ -48,6 +48,28 @@ function scene:create( event )
 
    -- Render the UI on each frame
    Runtime:addEventListener( 'enterFrame', renderUI )
+
+   -- Create a simple Next Level button
+   nextLevelText = display.newText({
+      parent = sceneGroup,
+      text = 'Next Level',
+      width = ( display.actualContentWidth / 2 ) - 20,
+      height = 80,
+      x = display.actualContentWidth - ( display.actualContentWidth / 4 ) - 20,
+      y = 90,
+      font = native.systemFont,
+      fontSize = 32,
+      align = 'right'
+   })
+   nextLevelText:setFillColor( 1, 0.83, 0.31 )
+
+   nextLevelText:addEventListener( 'tap', function()
+      if level.loaded then level:endLevel() end
+      composer.gotoScene( 'views.level-two', {
+         effect = "fade",
+         time = 200
+      })
+   end)
 end
 
 -- "scene:show()"
