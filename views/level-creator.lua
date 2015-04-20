@@ -1,17 +1,15 @@
 local composer = require 'composer'
 local scene = composer.newScene()
+local levelLoader = require 'components.level-loader'
+local brick = require("components.brick")
 
-local levelData, playLevel, playLevelBtn, bricks
+local levelData, playLevel, playLevelBtn, bricks, selected
 
 bricks = {}
 
 levelData = {
 	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
-	{ -1,  0,  1,  1,  1,  1,  1,  1,  0, -1},
-	{ -1,  0,  2,  2,  1,  1,  2,  2,  0, -1},
-	{ -1,  0,  1,  1,  1,  1,  1,  1,  0, -1},
-	{ -1,  0,  1,  3,  2,  2,  3,  1,  0, -1},
 	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
 	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
 	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
@@ -23,6 +21,30 @@ levelData = {
 	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
 	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
 	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+	{ -1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+	{ -1, -2, -2, -2, -2, -2, -2, -2, -2, -1}
+}
+local templevelData = {
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
+	{ 0,  0,  0,  0,  0,  0,  0,  0,  0, 0},
 	{ -1, -2, -2, -2, -2, -2, -2, -2, -2, -1}
 }
 
@@ -82,8 +104,89 @@ function scene:create(event)
 
 	bricks.grey = display.newRect( sceneGroup, x, y, width, height )
 	bricks.grey:setFillColor( 1, 1, 1, 0.4 )
-end
+	local function blockselectred()
+		bricks.blue.strokeWidth = 0
+		bricks.yellow.strokeWidth = 0
+		bricks.grey.strokeWidth = 0
+		bricks.red.stroke = { 0, 0.98, 0.84 }
+		bricks.red.strokeWidth = 3
+		selected = 1
+		bricks.brickType = 1
+		bricks.hitpoints = 1
+	end
+	local function blockselectblue()
+		bricks.red.strokeWidth = 0
+		bricks.yellow.strokeWidth = 0
+		bricks.grey.strokeWidth = 0
+		bricks.blue.stroke = { 0, 0.98, 0.84 }
+		bricks.blue.strokeWidth = 3
+		selected = 2
+		bricks.brickType = 2
+		bricks.hitpoints = 2
+	end
+	local function blockselectyellow()
+		bricks.red.strokeWidth = 0
+		bricks.blue.strokeWidth = 0
+		bricks.grey.strokeWidth = 0
+		bricks.yellow.stroke = { 0, 0.98, 0.84 }
+		bricks.yellow.strokeWidth = 3
+		selected = 3
+		bricks.brickType = 'yellow'
+	end
+	local function blockselectgrey()
+		bricks.red.strokeWidth = 0
+		bricks.blue.strokeWidth = 0
+		bricks.yellow.strokeWidth = 0
+		bricks.grey.stroke = { 0, 0.98, 0.84 }
+		bricks.grey.strokeWidth = 3
+		selected = -1
+		bricks.brickType = 'wall'
+		bricks.hitpoints = 1
+	end
+	bricks.red:addEventListener( "tap", blockselectred)
+	bricks.blue:addEventListener( "tap", blockselectblue)
+	bricks.yellow:addEventListener( "tap", blockselectyellow)
+	bricks.grey:addEventListener( "tap", blockselectgrey)
+	local zone = display.newRect( display.contentCenterX, display.contentCenterY + 120, display.contentWidth, display.contentHeight)
+    zone:setFillColor( 0,0,0, .1)
+    local function zoneHandler(event)
+		 	-- convert the tap position to 18x10 grid position
+			 -- based on the board size
+		local x, y = event.target:contentToLocal(event.x, event.y);
+		x = x + 225; -- conversion
+		y = y + 225; -- conversion
+		x = math.ceil( x/75 );
+		y = math.ceil( y/65 );
 
+		if selected == 1 then
+		--local newbrick = brick:new(x, y, 1, sceneGroup)
+			levelData[y+6][x+2] = 1
+			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+   			level:loadLevel() 
+   			level:renderBricks()
+		elseif selected == 2 then
+		--local newbrick = brick:new(x, y, 1, sceneGroup)
+			levelData[y+6][x+2] = 2
+			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+   			level:loadLevel() 
+   			level:renderBricks()
+		elseif selected == 3 then
+		--local newbrick = brick:new(x, y, 1, sceneGroup)
+
+			levelData[y+6][x+2] = 3
+			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+   			level:loadLevel() 
+   			level:renderBricks()
+		else 
+		--local newbrick = brick:new(x, y, 1, sceneGroup)
+			levelData[y+6][x+2] = -1 
+			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+   			level:loadLevel() 
+   			level:renderBricks()
+		end
+	end
+	zone:addEventListener("tap", zoneHandler);
+end
 function scene:show(event)
 	
 end

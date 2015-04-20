@@ -27,7 +27,7 @@ function scene:create( event )
    topbar:setFillColor( 0.06, 0.36, 0.39 )
 
    -- create and load the level
-   level = levelLoader.new(sceneGroup, event.params.levelData, 'views.level-two')
+   level = levelLoader.new(sceneGroup, event.params.levelData, 'views.level-creator')
    level:loadLevel()
 
    -- Begin rendering the UI
@@ -82,21 +82,7 @@ function scene:show( event )
       if level.loaded then
          level:startLevel()
      end
-      local zone = display.newRect( display.contentCenterX, display.contentCenterY + 120, display.contentWidth, display.contentHeight)
-      zone:setFillColor( 0,0,0, 0)
-      local function zoneHandler(event)
-		 	-- convert the tap position to 18x10 grid position
-			 -- based on the board size
-			local x, y = event.target:contentToLocal(event.x, event.y);
-			x = x + 225; -- conversion
-			y = y + 225; -- conversion
-			x = math.ceil( x/150 );
-			y = math.ceil( y/150 );
-			if (game.mark(x,y)==false) then --bad move
-				return;
-			end
-		end
-		zone:addEventListener("tap", zoneHandler);
+
 	end
 
 end

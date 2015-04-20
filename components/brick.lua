@@ -32,7 +32,7 @@ local function new(x, y, brickType, displayGroup)
 			self.strokeWidth = 2
 
 		elseif self.brickType == 'wall' then
-			self:setFillColor( 0, 0, 0, 0.2 )
+			self:setFillColor(.7,.7,.7)
 
 		elseif self.brickType == 'pit' then
 			self:setFillColor( 0, 0, 0 )
