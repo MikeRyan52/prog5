@@ -78,6 +78,12 @@ local function new(x, y, brickType, displayGroup)
 
 		self:setColor()
 	end
+	function box:deleteBrick()
+		self:removeSelf( )
+	end
+	function dragMovement()
+
+	end
 
 	box:setColor();
 

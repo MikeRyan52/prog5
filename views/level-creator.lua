@@ -2,6 +2,7 @@ local composer = require 'composer'
 local scene = composer.newScene()
 local levelLoader = require 'components.level-loader'
 local brick = require("components.brick")
+local level
 
 local levelData, playLevel, playLevelBtn, bricks, selected
 
@@ -153,40 +154,67 @@ function scene:create(event)
 		 	-- convert the tap position to 18x10 grid position
 			 -- based on the board size
 		local x, y = event.target:contentToLocal(event.x, event.y);
+		print(x,y)
 		x = x + 225; -- conversion
 		y = y + 225; -- conversion
 		x = math.ceil( x/75 );
 		y = math.ceil( y/65 );
+		print(x,y)
+		if event.numTaps == 1 then
+			if selected == 1 then
+			--local newbrick = brick:new(x, y, 1, sceneGroup)
+				levelData[y+6][x+2] = 1
+				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+	   			level:loadLevel() 
+	   			level:renderBricks()
+			elseif selected == 2 then
+			--local newbrick = brick:new(x, y, 1, sceneGroup)
+				levelData[y+6][x+2] = 2
+				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+	   			level:loadLevel() 
+	   			level:renderBricks()
+			elseif selected == 3 then
+			--local newbrick = brick:new(x, y, 1, sceneGroup)
 
-		if selected == 1 then
-		--local newbrick = brick:new(x, y, 1, sceneGroup)
-			levelData[y+6][x+2] = 1
-			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-   			level:loadLevel() 
-   			level:renderBricks()
-		elseif selected == 2 then
-		--local newbrick = brick:new(x, y, 1, sceneGroup)
-			levelData[y+6][x+2] = 2
-			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-   			level:loadLevel() 
-   			level:renderBricks()
-		elseif selected == 3 then
-		--local newbrick = brick:new(x, y, 1, sceneGroup)
-
-			levelData[y+6][x+2] = 3
-			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-   			level:loadLevel() 
-   			level:renderBricks()
-		else 
-		--local newbrick = brick:new(x, y, 1, sceneGroup)
-			levelData[y+6][x+2] = -1 
-			local level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-   			level:loadLevel() 
-   			level:renderBricks()
+				levelData[y+6][x+1] = 3
+				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+	   			level:loadLevel() 
+	   			level:renderBricks()
+			else 
+			--local newbrick = brick:new(x, y, 1, sceneGroup)
+				levelData[y+6][x+2] = -1 
+				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+	   			level:loadLevel() 
+	   			level:renderBricks()
+			end
+		elseif event.numTaps == 2 then
+			levelData[y+6][x+2] = 0
+			level:brickRemoval()
 		end
+		local function brickmovement()
+			--local x, y = event.target.x, event.target.y
+			  if event.phase == "began" then   
+			    brick.markX = brick.shape.x 
+			    brick.markY = brick.y
+			  elseif event.phase == "moved" then   
+			    local x = (event.x - event.xStart) + self.shape.markX   
+			    local y = (event.y - event.yStart) + self.shape.markY 
+				    if (x <= 20 + self.shape.width/2) then
+				       brick.x = 20+brick.width/2;
+				    elseif (x >= display.contentWidth-20-brick.width/2) then
+				       brick.x = display.contentWidth-20-brick.width/2;
+				    else
+				       brick.x = x;    
+				    end
+				       brick.y = y;    
+			  end
+		end
+		zone:addEventListener("touch", brickmovement)
 	end
 	zone:addEventListener("tap", zoneHandler);
+
 end
+
 function scene:show(event)
 	
 end

@@ -1,6 +1,7 @@
 local json = require 'json'
 local brick = require 'components.brick'
 local composer = require 'composer'
+local brick = require 'components.brick'
 
 function new(group, levelData, nextScene)
 	group.loaded = false
@@ -174,6 +175,9 @@ function new(group, levelData, nextScene)
 			self.paddleTrack:removeSelf();
 			self.paddleTrack = 0;
 		end
+	end
+	function group:brickRemoval()
+		event.target:deleteBrick( )
 	end
 
 	return group
