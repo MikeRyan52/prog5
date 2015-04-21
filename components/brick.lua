@@ -12,18 +12,19 @@ local function new(x, y, brickType, displayGroup, spaceX, spaceY)
 	}
 
 	-- Set the brick type and hitpoints
+	-- if the brick is either red or blue its type is normal
 	if brickType < 3 and brickType > 0 then
 		box.brickType = 'normal'
 		box.hitpoints = brickType
-
+	-- if the bricktype is set to three then it is yellow
 	elseif brickType == 3 then
 		box.brickType = 'yellow'
 		box.hitpoints = -1
-
+	-- if the bricktype is set to negavtive one then it is a wall
 	elseif brickType == -1 then
 		box.brickType = 'wall'
 		box.hitpoints = -1
-
+	-- if the bricktype is set to negative 2 then it is a pit or deathtrap
 	elseif brickType == -2 then
 		box.brickType = 'pit'
 		box.hitpoints = -1
