@@ -5,6 +5,7 @@ local brickHeight = ( display.actualContentHeight - 120 ) / 16
 local function new(x, y, brickType, displayGroup)
 	local box = display.newRect( displayGroup, x, y, brickWidth, brickHeight, type )
 	box.isBrick = true
+	box.brickTypeNumber = brickType
 
 	-- Set the brick type and hitpoints
 	if brickType < 3 and brickType > 0 then

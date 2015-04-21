@@ -2,9 +2,10 @@ local composer = require 'composer'
 local scene = composer.newScene()
 local levelLoader = require 'components.level-loader'
 local brick = require("components.brick")
+local findSpace = require 'utilities.find-space'
 local level
 
-local levelData, playLevel, playLevelBtn, bricks, selected
+local levelData, playLevel, playLevelBtn, bricks, selected, setupDragHandlers
 
 physics.start()
 bricks = {}
@@ -110,7 +111,7 @@ function scene:create(event)
 		bricks.blue.strokeWidth = 0
 		bricks.yellow.strokeWidth = 0
 		bricks.grey.strokeWidth = 0
-		bricks.red.stroke = { 0, 0.98, 0.84 }
+		bricks.red.stroke = { 1, 1, 1 }
 		bricks.red.strokeWidth = 3
 		selected = 1
 		bricks.brickType = 1
@@ -120,7 +121,7 @@ function scene:create(event)
 		bricks.red.strokeWidth = 0
 		bricks.yellow.strokeWidth = 0
 		bricks.grey.strokeWidth = 0
-		bricks.blue.stroke = { 0, 0.98, 0.84 }
+		bricks.blue.stroke = { 1, 1, 1 }
 		bricks.blue.strokeWidth = 3
 		selected = 2
 		bricks.brickType = 2
@@ -130,7 +131,7 @@ function scene:create(event)
 		bricks.red.strokeWidth = 0
 		bricks.blue.strokeWidth = 0
 		bricks.grey.strokeWidth = 0
-		bricks.yellow.stroke = { 0, 0.98, 0.84 }
+		bricks.yellow.stroke = { 1, 1, 1 }
 		bricks.yellow.strokeWidth = 3
 		selected = 3
 		bricks.brickType = 'yellow'
@@ -139,7 +140,7 @@ function scene:create(event)
 		bricks.red.strokeWidth = 0
 		bricks.blue.strokeWidth = 0
 		bricks.yellow.strokeWidth = 0
-		bricks.grey.stroke = { 0, 0.98, 0.84 }
+		bricks.grey.stroke = { 1, 1, 1 }
 		bricks.grey.strokeWidth = 3
 		selected = -1
 		bricks.brickType = 'wall'
@@ -151,6 +152,7 @@ function scene:create(event)
 	bricks.grey:addEventListener( "tap", blockselectgrey)
 	local zone = display.newRect( display.contentCenterX, display.contentCenterY + 120, display.contentWidth, display.contentHeight)
     zone:setFillColor( 0,0,0, .1)
+    zone:toBack()
     local function zoneHandler(event)
 		 	-- convert the tap position to 18x10 grid position
 			 -- based on the board size
@@ -167,56 +169,70 @@ function scene:create(event)
 			if selected == 1 then
 			--local newbrick = brick:new(x, y, 1, sceneGroup)
 				levelData[y+6][x+2] = 1
-				print(event.y)
-				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-	   			level:loadLevel() 
-	   			level:renderBricks()
 			elseif selected == 2 then
 			--local newbrick = brick:new(x, y, 1, sceneGroup)
 				levelData[y+6][x+2] = 2
-				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-	   			level:loadLevel() 
-	   			level:renderBricks()
 			elseif selected == 3 then
 			--local newbrick = brick:new(x, y, 1, sceneGroup)
 
 				levelData[y+6][x+1] = 3
-				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-	   			level:loadLevel() 
-	   			level:renderBricks()
 			else 
 			--local newbrick = brick:new(x, y, 1, sceneGroup)
 				levelData[y+6][x+2] = -1 
-				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-	   			level:loadLevel() 
-	   			level:renderBricks()
 			end
+
+			level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+   			level:loadLevel() 
+   			level:renderBricks()
+   			setupDragHandlers(level)
 		elseif event.numTaps == 2 then
 			levelData[y+6][x+2] = 0
 			event.target:removeSelf( )
 
 		end
-		local function brickmovement()
-			--local x, y = event.target.x, event.target.y
-			  if event.phase == "began" then   
-			    brick.markX = brick.shape.x 
-			    brick.markY = brick.y
-			  elseif event.phase == "moved" then   
-			    local x = (event.x - event.xStart) + self.shape.markX   
-			    local y = (event.y - event.yStart) + self.shape.markY 
-				    if (x <= 20 + self.shape.width/2) then
-				       brick.x = 20+brick.width/2;
-				    elseif (x >= display.contentWidth-20-brick.width/2) then
-				       brick.x = display.contentWidth-20-brick.width/2;
-				    else
-				       brick.x = x;    
-				    end
-				       brick.y = y;    
-			  end
-		end
-		zone:addEventListener("touch", brickmovement)
+		
 	end
 	zone:addEventListener("tap", zoneHandler);
+
+	function setupDragHandlers(level)
+		local function brickmovement(event)
+			--local x, y = event.target.x, event.target.y
+			local brick = event.target
+			if event.phase == "began" then   
+				brick.markX = brick.x 
+			    brick.markY = brick.y
+			elseif event.phase == "moved" then   
+			    local x = (event.x - event.xStart) + brick.markX   
+			    local y = (event.y - event.yStart) + brick.markY 
+			    if (x <= 20 + brick.width/2) then
+			       brick.x = 20+brick.width/2;
+			    elseif (x >= display.contentWidth-20-brick.width/2) then
+			       brick.x = display.contentWidth-20-brick.width/2;
+			    else
+			       brick.x = x;    
+			    end
+			       brick.y = y;
+			elseif event.phase == 'ended' then
+				local space = findSpace(brick.x, brick.y)
+
+				if space then
+					levelData[space.y][space.x] = brick.brickTypeNumber
+					level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+					level:loadLevel()
+					level:renderBricks()
+					setupDragHandlers(level)
+				else
+					brick.x = brick.markX
+					brick.y = brick.markY
+				end
+			end
+		end
+
+		for index,brick in ipairs(level.bricks) do
+			brick:addEventListener('touch', brickmovement)
+			brick:toFront()
+		end
+	end
 
 end
 
