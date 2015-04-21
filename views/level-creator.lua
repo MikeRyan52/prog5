@@ -207,6 +207,9 @@ function scene:create(event)
 				    brick.markY = brick.y
 				    brickMoving = true
 				    brick.moving = true
+				    brick.stroke = { 0, 0, 0 }
+				    brick.strokeWidth = 4
+				    brick:toFront()
 				elseif event.phase == "moved" then 
 					if not brick.markX then brick.markX = brick.x end
 					if not brick.markY then brick.markY = brick.y end
@@ -239,6 +242,8 @@ function scene:create(event)
 
 					brickMoving = false
 					brick.moving = false
+				    brick.stroke = nil
+				    brick.strokeWidth = 0
 				end
 			end
 		end
