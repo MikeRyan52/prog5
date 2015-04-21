@@ -155,6 +155,8 @@ function scene:create(event)
 			 -- based on the board size
 		local x, y = event.target:contentToLocal(event.x, event.y);
 		print(x,y)
+		local storagex = x
+		local storagey = y
 		x = x + 225; -- conversion
 		y = y + 225; -- conversion
 		x = math.ceil( x/75 );
@@ -164,7 +166,8 @@ function scene:create(event)
 			if selected == 1 then
 			--local newbrick = brick:new(x, y, 1, sceneGroup)
 				levelData[y+6][x+2] = 1
-				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+				print(event.y)
+				level = brick:new(x, y, 1, sceneGroup, levelData, 'views.level-creator')
 	   			level:loadLevel() 
 	   			level:renderBricks()
 			elseif selected == 2 then
@@ -189,7 +192,8 @@ function scene:create(event)
 			end
 		elseif event.numTaps == 2 then
 			levelData[y+6][x+2] = 0
-			level:brickRemoval()
+			event.target:removeSelf( )
+
 		end
 		local function brickmovement()
 			--local x, y = event.target.x, event.target.y

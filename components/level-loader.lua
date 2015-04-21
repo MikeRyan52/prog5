@@ -177,7 +177,7 @@ function new(group, levelData, nextScene)
 		end
 	end
 	function group:brickRemoval()
-		event.target:deleteBrick( )
+		self:deleteBrick( )
 	end
 
 	return group
