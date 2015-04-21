@@ -167,7 +167,7 @@ function scene:create(event)
 			--local newbrick = brick:new(x, y, 1, sceneGroup)
 				levelData[y+6][x+2] = 1
 				print(event.y)
-				level = brick:new(x, y, 1, sceneGroup, levelData, 'views.level-creator')
+				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
 	   			level:loadLevel() 
 	   			level:renderBricks()
 			elseif selected == 2 then
