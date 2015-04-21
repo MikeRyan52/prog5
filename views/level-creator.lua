@@ -214,7 +214,7 @@ function scene:create(event)
 			       brick.y = y;
 			elseif event.phase == 'ended' then
 				local space = findSpace(brick.x, brick.y)
-
+				brick:removeSelf( )
 				if space then
 					levelData[space.y][space.x] = brick.brickTypeNumber
 					level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
