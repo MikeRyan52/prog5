@@ -1,4 +1,5 @@
 local brick = require 'components.brick'
+local json = require 'json'
 
 function leftX(x)
 	return x * brick.width
@@ -33,7 +34,7 @@ while x <= 10 do
 			},
 			bottomright = {
 				x = rightX(x),
-				y = topY(y)
+				y = bottomY(y)
 			}
 		}) 
 
@@ -42,6 +43,8 @@ while x <= 10 do
 
 	x = x + 1
 end
+
+print(json.encode(bricks))
 
 function test(x,y)
 	local found = false;
