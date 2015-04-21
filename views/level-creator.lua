@@ -219,7 +219,7 @@ function scene:create(event)
 			       brick.y = y;
 			elseif event.phase == 'ended' then
 				local space = findSpace(brick.x, brick.y)
-
+				brick:removeSelf( )
 				if space then
 					brick:removeSelf()
 					levelData[brick.coords.y + 1][brick.coords.x + 1] = 0
