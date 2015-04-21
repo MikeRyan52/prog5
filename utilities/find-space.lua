@@ -44,8 +44,6 @@ while x <= 10 do
 	x = x + 1
 end
 
-print(json.encode(bricks))
-
 function test(x,y)
 	local found = false;
 
