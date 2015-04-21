@@ -196,40 +196,49 @@ function scene:create(event)
 	zone:addEventListener("tap", zoneHandler);
 
 	setupDragHandlers = function(level)
+		local brickMoving = false
 		local function brickmovement(event)
 			--local x, y = event.target.x, event.target.y
 			local brick = event.target
-			if event.phase == "began" then   
-				brick.markX = brick.x 
-			    brick.markY = brick.y
-			elseif event.phase == "moved" then 
-				if not brick.markX then brick.markX = brick.x end
-				if not brick.markY then brick.markY = brick.y end
 
-			    local x = (event.x - event.xStart) + brick.markX   
-			    local y = (event.y - event.yStart) + brick.markY 
-			    if (x <= 20 + brick.width/2) then
-			       brick.x = 20+brick.width/2;
-			    elseif (x >= display.contentWidth-20-brick.width/2) then
-			       brick.x = display.contentWidth-20-brick.width/2;
-			    else
-			       brick.x = x;    
-			    end
-			       brick.y = y;
-			elseif event.phase == 'ended' then
-				local space = findSpace(brick.x, brick.y)
-				brick:removeSelf( )
-				if space then
-					brick:removeSelf()
-					levelData[brick.coords.y + 1][brick.coords.x + 1] = 0
-					levelData[space.y][space.x] = brick.brickTypeNumber
-					level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-					level:loadLevel()
-					level:renderBricks()
-					setupDragHandlers(level)
-				else
-					brick.x = brick.markX
-					brick.y = brick.markY
+			if not brickMoving or brick.moving then
+				if event.phase == "began" then   
+					brick.markX = brick.x 
+				    brick.markY = brick.y
+				    brickMoving = true
+				    brick.moving = true
+				elseif event.phase == "moved" then 
+					if not brick.markX then brick.markX = brick.x end
+					if not brick.markY then brick.markY = brick.y end
+
+				    local x = (event.x - event.xStart) + brick.markX   
+				    local y = (event.y - event.yStart) + brick.markY 
+				    if (x <= 20 + brick.width/2) then
+				       brick.x = 20+brick.width/2;
+				    elseif (x >= display.contentWidth-20-brick.width/2) then
+				       brick.x = display.contentWidth-20-brick.width/2;
+				    else
+				       brick.x = x;    
+				    end
+				       brick.y = y;
+				elseif event.phase == 'ended' then
+					local space = findSpace(brick.x, brick.y)
+					brick:removeSelf( )
+					if space then
+						brick:removeSelf()
+						levelData[brick.coords.y + 1][brick.coords.x + 1] = 0
+						levelData[space.y][space.x] = brick.brickTypeNumber
+						level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+						level:loadLevel()
+						level:renderBricks()
+						setupDragHandlers(level)
+					else
+						brick.x = brick.markX
+						brick.y = brick.markY
+					end
+
+					brickMoving = false
+					brick.moving = false
 				end
 			end
 		end
