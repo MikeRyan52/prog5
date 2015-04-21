@@ -77,7 +77,7 @@ function new(group, levelData, nextScene)
 		for i,row in pairs(self.brickLayout) do
 			for j,brickData in pairs(row) do
 				if brickData ~= 0 then
-					local brick = brick.new( xCoord(), yCoord(), brickData, self )
+					local brick = brick.new( xCoord(), yCoord(), brickData, self, x, y )
 					if brick.brickType == 'normal' then normalBricks = normalBricks + 1 end
 					brick.coords = { x = x, y = y }
 					physics.addBody( brick, 'kinematic' )

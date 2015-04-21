@@ -3,6 +3,7 @@ local scene = composer.newScene()
 local levelLoader = require 'components.level-loader'
 local brick = require("components.brick")
 local findSpace = require 'utilities.find-space'
+local json = require 'json'
 local level
 
 local levelData, playLevel, playLevelBtn, bricks, selected, setupDragHandlers
@@ -201,7 +202,11 @@ function scene:create(event)
 			if event.phase == "began" then   
 				brick.markX = brick.x 
 			    brick.markY = brick.y
-			elseif event.phase == "moved" then   
+				print(json.encode(levelData))
+			elseif event.phase == "moved" then 
+				if not brick.markX then brick.markX = brick.x end
+				if not brick.markY then brick.markY = brick.y end
+
 			    local x = (event.x - event.xStart) + brick.markX   
 			    local y = (event.y - event.yStart) + brick.markY 
 			    if (x <= 20 + brick.width/2) then
@@ -216,6 +221,9 @@ function scene:create(event)
 				local space = findSpace(brick.x, brick.y)
 
 				if space then
+					brick:removeSelf()
+					levelData[brick.coords.y + 1][brick.coords.x + 1] = 0
+					print(json.encode(levelData))
 					levelData[space.y][space.x] = brick.brickTypeNumber
 					level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
 					level:loadLevel()

@@ -2,10 +2,14 @@ local brickWidth = display.actualContentWidth / 10
 local brickHeight = ( display.actualContentHeight - 120 ) / 16
 
 -- Create a new display rectangle and decorate the object
-local function new(x, y, brickType, displayGroup)
+local function new(x, y, brickType, displayGroup, spaceX, spaceY)
 	local box = display.newRect( displayGroup, x, y, brickWidth, brickHeight, type )
 	box.isBrick = true
 	box.brickTypeNumber = brickType
+	box.gridSpace = {
+		x = spaceX,
+		y = spaceY
+	}
 
 	-- Set the brick type and hitpoints
 	if brickType < 3 and brickType > 0 then
