@@ -6,7 +6,7 @@ local findSpace = require 'utilities.find-space'
 local json = require 'json'
 local level
 
-local levelData, playLevel, playLevelBtn, bricks, selected, setupDragHandlers
+local levelData, playLevel, playLevelBtn, bricks, selected, setupDragHandlers, reloadLevel
 
 physics.start()
 bricks = {}
@@ -178,10 +178,7 @@ function scene:create(event)
 					levelData[space.y][space.x] = -1 
 				end
 
-				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-	   			level:loadLevel() 
-	   			level:renderBricks()
-	   			setupDragHandlers(level)
+				reloadLevel()
 			elseif event.numTaps == 2 then
 				levelData[y+6][x+2] = 0
 				event.target:removeSelf( )
@@ -228,10 +225,8 @@ function scene:create(event)
 						brick:removeSelf()
 						levelData[brick.coords.y + 1][brick.coords.x + 1] = 0
 						levelData[space.y][space.x] = brick.brickTypeNumber
-						level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-						level:loadLevel()
-						level:renderBricks()
-						setupDragHandlers(level)
+						
+						reloadLevel()
 					else
 						brick.x = brick.markX
 						brick.y = brick.markY
@@ -251,11 +246,17 @@ function scene:create(event)
 		end
 	end
 
-    level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-	level:loadLevel()
-	level:renderBricks()
-	setupDragHandlers(level)
+	    
 
+	reloadLevel = function()
+		if level then level:destroyBricks() end
+		level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+		level:loadLevel()
+		level:renderBricks()
+		setupDragHandlers(level)
+	end
+
+	reloadLevel()
 end
 
 function scene:show(event)

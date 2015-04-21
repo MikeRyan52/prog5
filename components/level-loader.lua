@@ -157,16 +157,18 @@ function new(group, levelData, nextScene)
 		end
 	end
 
+	function group:destroyBricks()
+		for i,brick in pairs(self.bricks) do
+			if brick.removeSelf then brick:removeSelf() end
+		end
+	end
+
 	-- Stop the physics engine and destroy the level
 	function group:endLevel()
 		if self.loaded and self.started then
 			physics.stop()
 			self.started = false
-
-			for i,brick in pairs(self.bricks) do
-				if brick.removeSelf then brick:removeSelf() end
-			end
-
+			self:destroyBricks()
 			self.bricks = {}
 			self.ball:removeSelf()
 			self.ball = false
