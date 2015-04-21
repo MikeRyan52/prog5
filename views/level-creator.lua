@@ -62,7 +62,6 @@ end
 
 function scene:create(event)
 	local sceneGroup = self.view;
-
 	-- create the background
 	local background = display.newRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight )
 	background:setFillColor( 1, 0.98, 0.84 )
@@ -154,6 +153,7 @@ function scene:create(event)
 	local zone = display.newRect( display.contentCenterX, display.contentCenterY + 120, display.contentWidth, display.contentHeight)
     zone:setFillColor( 0,0,0, .1)
     zone:toBack()
+
     local function zoneHandler(event)
 		 	-- convert the tap position to 18x10 grid position
 			 -- based on the board size
@@ -195,14 +195,13 @@ function scene:create(event)
 	end
 	zone:addEventListener("tap", zoneHandler);
 
-	function setupDragHandlers(level)
+	setupDragHandlers = function(level)
 		local function brickmovement(event)
 			--local x, y = event.target.x, event.target.y
 			local brick = event.target
 			if event.phase == "began" then   
 				brick.markX = brick.x 
 			    brick.markY = brick.y
-				print(json.encode(levelData))
 			elseif event.phase == "moved" then 
 				if not brick.markX then brick.markX = brick.x end
 				if not brick.markY then brick.markY = brick.y end
@@ -223,7 +222,6 @@ function scene:create(event)
 				if space then
 					brick:removeSelf()
 					levelData[brick.coords.y + 1][brick.coords.x + 1] = 0
-					print(json.encode(levelData))
 					levelData[space.y][space.x] = brick.brickTypeNumber
 					level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
 					level:loadLevel()
@@ -241,6 +239,11 @@ function scene:create(event)
 			brick:toFront()
 		end
 	end
+
+    level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+	level:loadLevel()
+	level:renderBricks()
+	setupDragHandlers(level)
 
 end
 
