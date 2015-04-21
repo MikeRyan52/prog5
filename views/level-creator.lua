@@ -6,6 +6,7 @@ local level
 
 local levelData, playLevel, playLevelBtn, bricks, selected
 
+physics.start()
 bricks = {}
 
 levelData = {
