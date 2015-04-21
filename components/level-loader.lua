@@ -93,6 +93,22 @@ function new(group, levelData, nextScene)
 
 		self.normalBricks = normalBricks
 		self.bricks = bricks
+		local function brickmovement()
+			--local x, y = event.target.x, event.target.y
+			    brick.markX = brick.shape.x 
+			    brick.markY = brick.y
+			    local x = (event.x - event.xStart) + self.shape.markX   
+			    local y = (event.y - event.yStart) + self.shape.markY 
+				    if (x <= 20 + self.shape.width/2) then
+				       brick.x = 20+brick.width/2;
+				    elseif (x >= display.contentWidth-20-brick.width/2) then
+				       brick.x = display.contentWidth-20-brick.width/2;
+				    else
+				       brick.x = x;    
+				    end
+				       brick.y = y;    
+		end
+		self:addEventListener("touch", brickmovement)
 	end
 
 	-- Create the paddle and setup event listeners
@@ -176,8 +192,11 @@ function new(group, levelData, nextScene)
 			self.paddleTrack = 0;
 		end
 	end
-	function group:brickRemoval()
-		self:deleteBrick( )
+	function group:brickMovement()
+		
+
+
+
 	end
 
 	return group

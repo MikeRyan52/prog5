@@ -193,28 +193,12 @@ function scene:create(event)
 			end
 		elseif event.numTaps == 2 then
 			levelData[y+6][x+2] = 0
-			event.target:removeSelf( )
+			level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+	   		level:loadLevel() 
+	   		level:renderBricks()
 
 		end
-		local function brickmovement()
-			--local x, y = event.target.x, event.target.y
-			  if event.phase == "began" then   
-			    brick.markX = brick.shape.x 
-			    brick.markY = brick.y
-			  elseif event.phase == "moved" then   
-			    local x = (event.x - event.xStart) + self.shape.markX   
-			    local y = (event.y - event.yStart) + self.shape.markY 
-				    if (x <= 20 + self.shape.width/2) then
-				       brick.x = 20+brick.width/2;
-				    elseif (x >= display.contentWidth-20-brick.width/2) then
-				       brick.x = display.contentWidth-20-brick.width/2;
-				    else
-				       brick.x = x;    
-				    end
-				       brick.y = y;    
-			  end
-		end
-		zone:addEventListener("touch", brickmovement)
+
 	end
 	zone:addEventListener("tap", zoneHandler);
 
