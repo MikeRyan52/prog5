@@ -163,8 +163,8 @@ function scene:create(event)
 		local storagey = y
 		x = x + 225; -- conversion
 		y = y + 225; -- conversion
-		x = math.ceil( x/75 );
-		y = math.ceil( y/65 );
+		x = math.ceil( x/brick.width);
+		y = math.ceil( y/brick.height);
 		print(x,y)
 		if event.numTaps == 1 then
 			if selected == 1 then
