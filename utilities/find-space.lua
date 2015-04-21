@@ -19,15 +19,15 @@ end
 
 local bricks = {}
 
-local x = 1
+local x = 0
 
-while x <= 10 do
-	local y = 1
+while x < 10 do
+	local y = 0
 
-	while y <= 18 do
+	while y < 18 do
 		table.insert(bricks, {
-			x = x,
-			y = y,
+			x = x + 1,
+			y = y + 1,
 			topleft = {
 				x = leftX(x),
 				y = topY(y)

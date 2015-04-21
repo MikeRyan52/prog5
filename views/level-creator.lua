@@ -63,6 +63,7 @@ end
 function scene:create(event)
 	local sceneGroup = self.view;
 	-- create the background
+	local brickMoving = false
 	local background = display.newRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight )
 	background:setFillColor( 1, 0.98, 0.84 )
 
@@ -157,51 +158,47 @@ function scene:create(event)
     local function zoneHandler(event)
 		 	-- convert the tap position to 18x10 grid position
 			 -- based on the board size
-		local x, y = event.target:contentToLocal(event.x, event.y);
-		print(x,y)
-		local storagex = x
-		local storagey = y
-		x = x + 225; -- conversion
-		y = y + 225; -- conversion
-		x = math.ceil( x/75 );
-		y = math.ceil( y/65 );
-		print(x,y)
-		if event.numTaps == 1 then
-			if selected == 1 then
-			--local newbrick = brick:new(x, y, 1, sceneGroup)
-				levelData[y+6][x+2] = 1
-			elseif selected == 2 then
-			--local newbrick = brick:new(x, y, 1, sceneGroup)
-				levelData[y+6][x+2] = 2
-			elseif selected == 3 then
-			--local newbrick = brick:new(x, y, 1, sceneGroup)
+		if not brickMoving then
+			local x, y = event.target:contentToLocal(event.x, event.y);
+			print(x,y)
+			local space = findSpace(event.x, event.y)
+			if event.numTaps == 1 and space then
+				if selected == 1 then
+				--local newbrick = brick:new(x, y, 1, sceneGroup)
+					levelData[space.y][space.x] = 1
+				elseif selected == 2 then
+				--local newbrick = brick:new(x, y, 1, sceneGroup)
+					levelData[space.y][space.x] = 2
+				elseif selected == 3 then
+				--local newbrick = brick:new(x, y, 1, sceneGroup)
 
-				levelData[y+6][x+1] = 3
-			else 
-			--local newbrick = brick:new(x, y, 1, sceneGroup)
-				levelData[y+6][x+2] = -1 
+					levelData[space.y][space.x] = 3
+				else 
+				--local newbrick = brick:new(x, y, 1, sceneGroup)
+					levelData[space.y][space.x] = -1 
+				end
+
+				level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
+	   			level:loadLevel() 
+	   			level:renderBricks()
+	   			setupDragHandlers(level)
+			elseif event.numTaps == 2 then
+				levelData[y+6][x+2] = 0
+				event.target:removeSelf( )
+
 			end
-
-			level = levelLoader.new(sceneGroup, levelData, 'views.level-creator')
-   			level:loadLevel() 
-   			level:renderBricks()
-   			setupDragHandlers(level)
-		elseif event.numTaps == 2 then
-			levelData[y+6][x+2] = 0
-			event.target:removeSelf( )
-
 		end
 		
 	end
 	zone:addEventListener("tap", zoneHandler);
 
 	setupDragHandlers = function(level)
-		local brickMoving = false
+		
 		local function brickmovement(event)
 			--local x, y = event.target.x, event.target.y
 			local brick = event.target
 
-			if not brickMoving or brick.moving then
+			if ( not brickMoving ) or brick.moving then
 				if event.phase == "began" then   
 					brick.markX = brick.x 
 				    brick.markY = brick.y
